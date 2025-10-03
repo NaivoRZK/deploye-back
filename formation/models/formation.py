@@ -4,9 +4,9 @@ class Formation(models.Model):
     id_formation = models.AutoField(primary_key=True)
     title = models.CharField(default="", max_length=255)
     description = models.CharField(default="", max_length=500)
-    date_formation = models.DateField(null=True, blank=True)  
+    date_formation = models.DateField(null=True, blank=True)
     duree_formation = models.PositiveIntegerField(
-        null=True, blank=True, 
+        null=True, blank=True,
         help_text="Durée de la formation en heures"
     )
     intervenant = models.CharField(default="", max_length=255)
@@ -16,24 +16,21 @@ class Formation(models.Model):
         on_delete=models.SET_NULL,
         related_name="formations",
         null=True,
-        blank=True,
-        default=None
+        blank=True
     )
     id_formateur = models.ForeignKey(
         'formation.Formateur',
         on_delete=models.SET_NULL,
         related_name="formations",
         null=True,
-        blank=True,
-        default=None
+        blank=True
     )
     id_membre = models.ForeignKey(
         'membre.Membre',
         on_delete=models.SET_NULL,
         related_name="formations",
         null=True,
-        blank=True,
-        default=None
+        blank=True
     )
 
     def __str__(self):

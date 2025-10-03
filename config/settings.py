@@ -2,30 +2,50 @@ from pathlib import Path
 import environ
 import dj_database_url
 
-# Base directory
+# ----------------------------
+# BASE DIRECTORY
+# ----------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Initialiser environ
-env = environ.Env()
+# ----------------------------
+# INITIALISER ENVIRON
+# ----------------------------
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+# Charger le fichier .env
+environ.Env.read_env(BASE_DIR / ".env")
 
-# Sécurité
+# ----------------------------
+# SÉCURITÉ
+# ----------------------------
 SECRET_KEY = env("SECRET_KEY", default="django-insecure-secret")
-DEBUG = env.bool("DEBUG", default=False)  # False en prod
-ALLOWED_HOSTS = ["deploye-back.onrender.com"]  # ton domaine Render
+DEBUG = env.bool("DEBUG", default=True)  # True en dev, False en prod
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
-# Applications
+# ----------------------------
+# APPLICATIONS INSTALLÉES
+# ----------------------------
 INSTALLED_APPS = [
+    # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "rest_framework",
-    "formation",
-    "membre",
+
+    # Third-party apps
+    'rest_framework',
+
+    # Mes apps
+    'formation',
+    'membre',
 ]
 
+# ----------------------------
+# MIDDLEWARE
+# ----------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -36,12 +56,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# ----------------------------
+# URLS & TEMPLATES
+# ----------------------------
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],  # dossier templates si besoin
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -56,17 +79,22 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
-# --------- DATABASE ----------
+# ----------------------------
+# DATABASES
+# ----------------------------
 DATABASES = {
     'default': dj_database_url.config(
-        default=env("DATABASE_URL", default=""),  # Render prendra sa variable automatiquement
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",  # fallback dev
         conn_max_age=600,
-        ssl_require=True
+        ssl_require=not DEBUG  # SSL uniquement en prod
     )
 }
 
-# Auth
-AUTH_USER_MODEL = "membre.User"
+# ----------------------------
+# AUTHENTICATION
+# ----------------------------
+# Si tu veux utiliser ton User personnalisé
+# AUTH_USER_MODEL = "membre.User"
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -75,12 +103,33 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Localisation
+# ----------------------------
+# LOCALISATION
+# ----------------------------
 LANGUAGE_CODE = 'fr-fr'
 TIME_ZONE = 'Africa/Nairobi'
 USE_I18N = True
 USE_TZ = True
 
-# Statics
+# ----------------------------
+# STATICS / MEDIA
+# ----------------------------
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
+
+# ----------------------------
+# DEFAULT AUTO FIELD
+# ----------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ----------------------------
+# REST FRAMEWORK (optionnel)
+# ----------------------------
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
+}
