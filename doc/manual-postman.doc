@@ -1,0 +1,90 @@
+Bonne question 👍 Je vais t’expliquer étape par étape comment entrer tes données dans **Postman** pour tester ton API `POST /users/create/`.
+
+---
+
+## 🚀 Étapes dans Postman
+
+1. **Lancer Postman**
+   Ouvre l’application (ou `postman` dans le terminal si installé par Snap).
+
+---
+
+2. **Créer une requête**
+
+   * Clique sur **New → HTTP Request** (ou le bouton **+**).
+   * Dans la barre en haut :
+
+     * Mets `POST` comme méthode.
+     * Mets ton URL :
+
+       ```
+       http://127.0.0.1:8000/users/create/
+       ```
+
+---
+
+3. **Configurer les headers**
+
+   * Clique sur l’onglet **Headers**.
+   * Ajoute une ligne :
+
+     * **Key** : `Content-Type`
+     * **Value** : `application/json`
+
+---
+
+4. **Entrer les données**
+
+   * Clique sur l’onglet **Body**.
+   * Coche **raw**.
+   * À droite, choisis **JSON** (au lieu de Text).
+   * Colle ton JSON :
+
+     ```json
+     {
+       "username": "techzara02",
+       "email": "rakoto@example.com",
+       "first_name": "Rakoto",
+       "last_name": "Jean",
+       "status": true,
+       "badge_status": false,
+       "address": "Lot II, Fianarantsoa",
+       "phone_number": "+261341234567",
+       "sexe": "M",
+       "role": ["admin", "manager"],
+       "detail_status": "Actif dans la communauté"
+     }
+     ```
+
+---
+
+5. **Envoyer la requête**
+
+   * Clique sur **Send**.
+   * Tu devrais voir une réponse JSON comme avec `curl` :
+
+     ```json
+     {
+       "message": "Utilisateur créé avec succès",
+       "data": {
+         "id_member": 3,
+         "username": "techzara02",
+         "email": "rakoto@example.com",
+         "first_name": "Rakoto",
+         "last_name": "Jean",
+         "status": true,
+         "badge_status": false,
+         "address": "Lot II, Fianarantsoa",
+         "phone_number": "+261341234567",
+         "sexe": "M",
+         "role": ["admin", "manager"],
+         "detail_status": "Actif dans la communauté"
+       }
+     }
+     ```
+
+---
+
+✅ Et voilà, ton API est testée via l’interface graphique Postman.
+
+👉 Veux-tu aussi que je te montre comment tester ton API en **GET** avec Postman pour voir la liste des utilisateurs (au lieu de créer) ?
