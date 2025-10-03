@@ -1,15 +1,20 @@
 from pathlib import Path
-import os
 import environ
 import dj_database_url
 
-
+# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-3=vfq0ybu-1y*&dt*dkrn#3_1j*#904a1idqxfm61_pn7wb@tj'
-DEBUG = True
-ALLOWED_HOSTS = ["*"]
+# Initialiser environ
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / ".env")  # pour local uniquement
 
+# Sécurité
+SECRET_KEY = env("SECRET_KEY", default="django-insecure-secret")
+DEBUG = env.bool("DEBUG", default=True)
+ALLOWED_HOSTS = ["*"]  # ou ['ton-domaine.onrender.com']
+
+# Applications
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -17,14 +22,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     "rest_framework",
-      "src.member", 
-    # application formation et membre 
     "formation",
     "membre",
-    
-    
 ]
 
 MIDDLEWARE = [
@@ -57,18 +57,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
+# --------- DATABASE ----------
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'techzara_db',
-        'USER': 'techzara',
-        'PASSWORD': '123tech',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=env('DATABASE_URL'),  # Render utilisera DATABASE_URL automatiquement
+        conn_max_age=600,
+        ssl_require=True  # important pour Render/PostgreSQL
+    )
 }
 
-AUTH_USER_MODEL = "member.User"
+# Auth
+AUTH_USER_MODEL = "membre.User"
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -77,10 +76,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# Localisation
 LANGUAGE_CODE = 'fr-fr'
 TIME_ZONE = 'Africa/Nairobi'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
+# Statics
+STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
