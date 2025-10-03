@@ -7,12 +7,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Initialiser environ
 env = environ.Env()
-environ.Env.read_env(BASE_DIR / ".env")  # pour local uniquement
 
 # Sécurité
 SECRET_KEY = env("SECRET_KEY", default="django-insecure-secret")
-DEBUG = env.bool("DEBUG", default=True)
-ALLOWED_HOSTS = ["*"]  # ou ['ton-domaine.onrender.com']
+DEBUG = env.bool("DEBUG", default=False)  # False en prod
+ALLOWED_HOSTS = ["deploye-back.onrender.com"]  # ton domaine Render
 
 # Applications
 INSTALLED_APPS = [
@@ -60,9 +59,9 @@ ASGI_APPLICATION = 'config.asgi.application'
 # --------- DATABASE ----------
 DATABASES = {
     'default': dj_database_url.config(
-        default=env('DATABASE_URL'),  # Render utilisera DATABASE_URL automatiquement
+        default=env("DATABASE_URL", default=""),  # Render prendra sa variable automatiquement
         conn_max_age=600,
-        ssl_require=True  # important pour Render/PostgreSQL
+        ssl_require=True
     )
 }
 
